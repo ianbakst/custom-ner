@@ -1,0 +1,27 @@
+doccano_entrypoint: http://10.20.0.85
+doccano_username: 'admin'
+doccano_password:
+doccano_project_type: SequenceLabeling
+
+workspace_home: 'analytics_solutions/EntityExtractor'
+model_dir : 'models'
+data_dir : 'data'
+
+#### Set pretrained_model_name to Null to start with empty model and save it as untrained_model_name.
+pretrained_model_name: Null
+untrained_model_name:
+
+tokenizer_prefixes:
+  - '-'
+  - '[0-9]+'
+  - '±'
+tokenizer_infixes:
+  - '/'
+  - '-'
+  - '[0-9]+'
+tokenizer_suffixes: []
+
+training_iterations: 10
+training_dropout: .2
+trained_pipe_components:
+- 'ner'

@@ -1,0 +1,8 @@
+*/DS_Store
+!data/processed/inputs/.keep
+!data/processed/outputs/.keep
+!data/raw/.keep
+data/*
+
+**/__pycache__/**
+.DS_Store

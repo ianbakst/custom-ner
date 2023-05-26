@@ -1,0 +1,339 @@
+swagger: "2.0"
+info:
+  description: APIs for interacting with the Entity Extractor App
+  version: "0.1.0"
+  title: Entity Extractor APIs
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /api
+
+# Paths supported by the server application
+paths:
+  /Data:
+    get:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.data.list_all
+      tags:
+        - Data
+      summary: List available datasets.
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+  /Data/ingest:
+    post:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.data.initialize
+      tags:
+        - Data
+      summary: Upload a new dataset.
+      description: Upload labels to a new
+      parameters:
+        - name: data
+          in: body
+          description: Input Data and Metadata.
+          required: True
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              doccano:
+                type: boolean
+              data:
+                type: array
+                items:
+                  properties:
+                    text:
+                      type: string
+                    labels:
+                      type: array
+                      items:
+                        type: array
+      responses:
+        204:
+          description: Success!
+        501:
+          description: Already exists
+  /Models:
+    get:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.model.list_all
+      tags:
+        - Models
+      summary: List available models.
+      description: List all available models
+      responses:
+        200:
+          description: Successful list all models operation
+          schema:
+            type: array
+            items:
+              properties:
+                name:
+                  type: string
+                language:
+                  type: string
+                pipeline:
+                  type: object
+                last_trained:
+                  type: string
+  /Models/delete_all:
+    delete:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.model.delete_all
+      tags:
+        - Models
+      summary: Delete all available models.
+      description: Delete all available models
+      responses:
+        200:
+          description: Delete All Successful.
+  /Models/create:
+    post:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.model.create
+      tags:
+        - Models
+      summary: Create a model.
+      description: Create a model
+      parameters:
+        - name: body
+          in: body
+          description: Model name and metadata.
+          required: True
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              language:
+                type: string
+              pipeline:
+                type: array
+                items:
+                  type: string
+      responses:
+        200:
+          description: Create Model Successful
+        400:
+          description: Model Name Not Provided
+        400:
+          description: Model Name Already Exists
+  /Models/{mname}/tokenizer:
+    post:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.model.update_tokenizer
+      tags:
+        - Models
+      summary: List available models.
+      description: List all available models
+      parameters:
+        - name: mname
+          in: path
+          description: Name of model for which tokenizer is being updated.
+          type: string
+          required: True
+        - name: fixes
+          in: body
+          description: Custom fixes to be added to tokenizer
+          required: True
+          schema:
+            type: object
+            properties:
+              prefix:
+                type: string
+              infix:
+                type: string
+              suffix:
+                type: string
+      responses:
+        200:
+          description: Successfully updated tokenizer.
+  /Models/{mname}:
+    delete:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.model.delete
+      tags:
+        - Models
+      summary: Delete specified model.
+      description: Delete specified model.
+      parameters:
+        - name: mname
+          in: path
+          description: Name of model to be trained.
+          type: string
+          required: True
+      responses:
+        200:
+          description: Delete Successful.
+  /Models/{mname}/train:
+    post:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.model.train
+      tags:
+        - Models
+      summary: Train a model.
+      description: Train specified model.
+      parameters:
+        - name: mname
+          in: path
+          description: Name of model to be trained.
+          type: string
+          required: True
+        - name: params
+          in: body
+          description: Training parameters
+          required: True
+          schema:
+            type: object
+            properties:
+              iterations:
+                type: integer
+              trainDataName:
+                type: string
+      responses:
+        200:
+          description: Model training initialized.
+  /Models/{mname}/test:
+    post:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.model.test
+      tags:
+        - Models
+      summary: Test a model.
+      description: Test specified model.
+      parameters:
+        - name: mname
+          in: path
+          description: Name of model to be trained.
+          type: string
+          required: True
+        - name: params
+          in: body
+          description: Testing parameters
+          required: True
+          schema:
+            type: object
+            properties:
+              testDataName:
+                type: string
+      responses:
+        200:
+          description: Model tested performed.
+  /Data/delete_all:
+    delete:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.data.delete_all
+      tags:
+        - Data
+      summary: Delete all datasets.
+      description: Delete all available datasets.
+      responses:
+        200:
+          description: Delete All Successful.
+  /Data/{dname}:
+    put:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.data.upsert
+      tags:
+        - Data
+      summary: Add data to an existing dataset.
+      description: Add data to an existing dataset.
+      parameters:
+        - name: dname
+          in: path
+          description: Name of dataset to be trained.
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: Input Data.
+          required: True
+          schema:
+            type: array
+            items:
+              properties:
+                text:
+                  type: string
+                labels:
+                  type: array
+                  items:
+                    type: array
+      responses:
+        200:
+          description: Upsert Successful.
+    delete:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.data.delete
+      tags:
+        - Data
+      summary: Delete specified dataset.
+      description: Delete specified dataset.
+      parameters:
+        - name: dname
+          in: path
+          description: Name of dataset to be trained.
+          type: string
+          required: True
+      responses:
+        200:
+          description: Delete Successful.
+
+  /Models/{mname}/predict:
+    post:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.model.predict
+      tags:
+        - Models
+      summary: Extract entities from text with a model.
+      description: Extract entities from text with a model
+      parameters:
+        - name: mname
+          in: path
+          description: Name of the model.
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: Needs description
+          required: True
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                recordId:
+                  type: string
+                description:
+                  type: string
+      responses:
+        200:
+          description: Success.
+        404:
+          description: Not found.
+  /Models/{mname}/scores:
+    post:
+      operationId: analytics_solutions.EntityExtractor.entity_extractor.api.model.scores
+      tags:
+        - Models
+      summary: Return entities and confidences from text with a model.
+      description: Return entities and confidences from text with a model.
+      parameters:
+        - name: mname
+          in: path
+          description: Name of the model.
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: Needs description
+          required: True
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: Success.
+        404:
+          description: Not found.
